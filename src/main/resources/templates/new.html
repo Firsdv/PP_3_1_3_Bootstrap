@@ -124,9 +124,10 @@
                                 <label for="password" class="form-label">Password</label>
                                 <input type="password" class="form-control" id="password" th:field="*{password}" required />
                             </div>
-                            <div class="mb-3 text-center"> <!-- Добавлено text-center для центрирования -->
+                            <div class="mb-3">
                                 <label class="form-label">Role</label>
-                                <select class="form-select" th:field="*{roles}" size="2" required>
+                                <small class="form-text text-muted">Выберите Role, удерживая клавишу Shift для выбора нескольких ролей.</small>
+                                <select class="form-select" th:field="*{roles}" multiple required>
                                     <option th:each="role : ${allRoles}" th:value="${role.id}"
                                             th:text="${#strings.replace(role.name, 'ROLE_', '')}">
                                     </option>

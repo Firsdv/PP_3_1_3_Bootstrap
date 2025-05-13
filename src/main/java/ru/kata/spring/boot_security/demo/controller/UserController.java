@@ -1,43 +1,37 @@
 package ru.kata.spring.boot_security.demo.controller;
 
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import ru.kata.spring.boot_security.demo.entityes.User;
-import ru.kata.spring.boot_security.demo.repository.UserRepository;
+import ru.kata.spring.boot_security.demo.service.UserService;
 
 import java.security.Principal;
+
 
 @Controller
 @RequestMapping("/user")
 public class UserController {
+    private final UserService userService;
 
-    private final UserRepository userRepository;
-
-    public UserController(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public UserController(UserService userService) {
+        this.userService = userService;
     }
 
     @GetMapping
-    public String showUsers(Model model, Principal principal) {
-        if (principal == null) {
-            return "redirect:/login";
-        }
-        User user = userRepository.findByEmail(principal.getName());
-        model.addAttribute("user", user);
-        model.addAttribute("firstname", user.getFirstname());
-        model.addAttribute("lastname", user.getLastname());
-        return "user";
-    }
+    public String showUser (Model model, Principal principal) {
+        // Получаем пользователя по principal
+        User user = userService.findByPrincipal(principal);
 
-    @GetMapping("/user")
-    public String userPage(Model model) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        User user = userRepository.findByEmail(auth.getName());
+        // Если пользователь не найден, перенаправляем на страницу входа
+        if (user == null) {
+            return "redirect:/login"; // Или на другую страницу, если это необходимо
+        }
+
+        // Добавляем пользователя в модель
         model.addAttribute("user", user);
-        return "user";
+        return "user"; // Возвращаем имя шаблона для страницы пользователя
     }
 }
+

@@ -1,7 +1,9 @@
 package ru.kata.spring.boot_security.demo.service;
 
+import org.springframework.security.core.Authentication;
 import ru.kata.spring.boot_security.demo.entityes.User;
 
+import java.security.Principal;
 import java.util.List;
 
 public interface UserService {
@@ -15,5 +17,12 @@ public interface UserService {
     void update(User user);
 
     void delete(Long userId);
+
+    User findByEmail(String email);
+
+    User findByPrincipal(Principal principal);
+
+    User findByAuthentication(Authentication auth);
+
 
 }

@@ -39,4 +39,14 @@ public class RoleServiceImpl implements RoleService {
     public void addRole(Role role) {
         roleRepository.save(role);
     }
+
+    @Override
+    @Transactional
+    public void deleteRole(Long id) {
+        if (roleRepository.existsById(id)) { // Проверка на существование роли
+            roleRepository.deleteById(id);
+        } else {
+            throw new IllegalArgumentException("Role with id " + id + " does not exist.");
+        }
+    }
 }

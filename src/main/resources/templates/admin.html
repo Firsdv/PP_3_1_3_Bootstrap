@@ -147,29 +147,32 @@
 <body>
 
 <!-- Боковая панель -->
+
 <div class="sidebar">
     <div class="list-group">
         <a href="/admin" class="list-group-item list-group-item-action active">Admin</a>
         <a href="/user" class="list-group-item list-group-item-action">User</a>
     </div>
 </div>
+
+
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
         <span class="navbar-text">
-            <span th:text="${authUser.email}"></span>
+            <span th:text="${authUser.email}">admin@example.com</span>
         with roles:
             <span th:text="${#strings.listJoin(authUser.roles.![#strings.replace(name, 'ROLE_', '')], ', ')}">ADMIN, USER</span>
         </span>
-        <form th:action="@{/logout}" method="post">
+        <form th:action="@{/logout}" method="post" class="ms-auto">
             <button type="submit" class="btn btn-outline-light btn-sm">Logout</button>
         </form>
     </div>
 </nav>
-    <div class="main-content px-3">
+<div class="main-content px-3">
     <div class="d-flex align-items-center mb-3">
         <h2 class="me-3">Admin Panel</h2>
     </div>
-        <!-- Основная панель -->
+    <!-- Основная панель -->
     <ul class="nav nav-tabs">
         <li class="nav-item">
             <a class="nav-link active" href="/admin">Users table</a>
@@ -179,9 +182,9 @@
         </li>
     </ul>
 
-        <div class="table-responsive mt-3">
-            <h3 style="background-color: #e9ecef; padding: 10px; border-radius: 5px; font-size: 1.2rem;">All users</h3>
-            <table class="table table-striped table-hover">
+    <div class="table-responsive mt-3">
+        <h3 style="background-color: #e9ecef; padding: 10px; border-radius: 5px; font-size: 1.2rem;">All users</h3>
+        <table class="table table-striped table-hover">
             <thead>
             <tr>
                 <th>ID</th>
@@ -244,12 +247,14 @@
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Role</label>
-                    <select class="form-select" th:field="*{roles}" size="2" required>
+                    <small class="form-text text-muted">Выберите Role, удерживая клавишу Shift для выбора нескольких ролей.</small>
+                    <select class="form-select" th:field="*{roles}" multiple required>
                         <option th:each="role : ${allRoles}" th:value="${role.id}"
                                 th:text="${#strings.replace(role.name, 'ROLE_', '')}">
                         </option>
                     </select>
                 </div>
+
             </div>
             <div class="modal-footer">
                 <a href="/admin" class="btn btn-secondary">Close</a>
