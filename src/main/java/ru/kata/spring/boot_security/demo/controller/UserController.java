@@ -34,4 +34,3 @@ public class UserController {
         return "user"; // Возвращаем имя шаблона для страницы пользователя
     }
 }
-

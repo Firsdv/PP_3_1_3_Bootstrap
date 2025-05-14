@@ -28,8 +28,8 @@ public class AdminController {
 
     @GetMapping
     public String showUserList(@RequestParam(value = "editId", required = false) Long editId,
-                                @RequestParam(value = "deleteId", required = false) Long deleteId,
-                                Model model, Principal principal) {
+                               @RequestParam(value = "deleteId", required = false) Long deleteId,
+                               Model model, Principal principal) {
         User authUser = userService.findByEmail(principal.getName());
         model.addAttribute("authUser", authUser );
         model.addAttribute("users", userService.findAll());
