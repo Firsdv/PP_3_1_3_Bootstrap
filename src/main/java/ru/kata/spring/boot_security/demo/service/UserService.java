@@ -24,5 +24,13 @@ public interface UserService {
 
     User findByAuthentication(Authentication auth);
 
+    boolean isEmailAlreadyExists(String email);
 
+    void createUserWithEncodedPassword(User user);
+
+    void updateUserWithPasswordHandling(User user);
+
+    User findByPrincipalOrThrow(Principal principal);
+
+    User getByIdOrThrow(Long id);
 }

@@ -36,30 +36,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return userRepository.findById(id).orElse(null);
     }
 
-
     @Override
     @Transactional
     public void save(User user) {
-        if (userRepository.findByEmail(user.getEmail()) != null) {
-            throw new IllegalArgumentException("Email already exists: " + user.getEmail());
-        }
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
-    }
-
-
-    @Override
-    @Transactional
-    public void update(User user) {
-        User existingUser  = findById(user.getId());
-        if (existingUser  != null) {
-            if (user.getPassword() == null || user.getPassword().isEmpty()) {
-                user.setPassword(existingUser .getPassword());
-            } else {
-                user.setPassword(passwordEncoder.encode(user.getPassword()));
-            }
-            userRepository.save(user);
-        }
     }
 
     @Override
@@ -70,9 +50,14 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     @Transactional
+    public void update(User user) {
+        userRepository.save(user);
+    }
+
+    @Override
+    @Transactional
     public User findByEmail(String email) {
         return userRepository.findByEmail(email);
-
     }
 
     @Override
@@ -92,8 +77,58 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = findByEmail(email);
         if (user == null) {
-            throw new UsernameNotFoundException("User  not found with email: " + email);
+            throw new UsernameNotFoundException("User not found with email: " + email);
         }
         return user;
     }
+
+    @Override
+    public boolean isEmailAlreadyExists(String email) {
+        return userRepository.findByEmail(email) != null;
+    }
+
+    @Override
+    @Transactional
+    public void createUserWithEncodedPassword(User user) {
+        if (isEmailAlreadyExists(user.getEmail())) {
+            throw new IllegalArgumentException("Email already exists: " + user.getEmail());
+        }
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        userRepository.save(user);
+    }
+
+    @Override
+    @Transactional
+    public void updateUserWithPasswordHandling(User user) {
+        User existingUser = findById(user.getId());
+        if (existingUser == null) return;
+
+        if (user.getPassword() == null || user.getPassword().isEmpty()) {
+            user.setPassword(existingUser.getPassword());
+        } else {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+        }
+
+        userRepository.save(user);
+    }
+
+    @Override
+    public User getByIdOrThrow(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + id));
+    }
+
+    @Override
+    public User findByPrincipalOrThrow(Principal principal) {
+        if (principal == null || principal.getName() == null) {
+            throw new UsernameNotFoundException("No authenticated user");
+        }
+        User user = findByEmail(principal.getName());
+        if (user == null) {
+            throw new UsernameNotFoundException("User not found with name: " + principal.getName());
+        }
+        return user;
+    }
+
+
 }
